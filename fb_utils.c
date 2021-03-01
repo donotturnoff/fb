@@ -83,19 +83,20 @@ void clear_buffer(Buffer *buf) {
     memset(buf->bb, 0, buf->size);
 }
 
-size_t get_offset(Buffer *buf, unsigned int x, unsigned int y) {
-    unsigned int w = buf->w;
-    return ((y*w)+x);
+void set_pixel(Buffer *buf, int x, int y, uint32_t colour) {
+    uint32_t *bb = buf->bb;
+    int buf_w = buf->w;
+    int buf_h = buf->h;
+    if (x < 0 || x >= buf_w || y < 0 || y >= buf_h) return;
+    bb[y*buf_w + x] = colour;
 }
 
-void set_pixel(Buffer *buf, unsigned int x, unsigned int y, uint32_t colour) {
-    size_t i = get_offset(buf, x, y);
-    buf->bb[i] = colour;
-}
-
-uint32_t get_pixel(Buffer *buf, unsigned int x, unsigned int y) {
-    size_t i = get_offset(buf, x, y);
-    return buf->bb[i];
+uint32_t get_pixel(Buffer *buf, int x, int y) {
+    uint32_t *bb = buf->bb;
+    int buf_w = buf->w;
+    int buf_h = buf->h;
+    if (x < 0 || x >= buf_w || y < 0 || y >= buf_h) return 0;
+    return bb[y*buf_w + x];
 }
 
 void fill_rect(Buffer *buf, int x0, int y0, unsigned int w, unsigned int h, uint32_t colour) {

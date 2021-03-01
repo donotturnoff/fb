@@ -46,8 +46,8 @@ void destroy_fb(Buffer *buf);
 void repaint(Buffer *buf);
 void clear_buffer(Buffer *buf);
 
-void set_pixel(Buffer *buf, unsigned int x, unsigned int y, uint32_t colour);
-uint32_t get_pixel(Buffer *buf, unsigned int x, unsigned int y);
+void set_pixel(Buffer *buf, int x, int y, uint32_t colour);
+uint32_t get_pixel(Buffer *buf, int x, int y);
 
 void fill_rect(Buffer *buf, int x0, int y0, unsigned int w, unsigned int h, uint32_t colour);
 void draw_rect(Buffer *buf, int x0, int y0, unsigned int w, unsigned int h, unsigned int border, uint32_t colour);
