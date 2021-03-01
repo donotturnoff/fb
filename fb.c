@@ -97,9 +97,7 @@ int main(void) {
     }
     buf.bb = bb_buf;
 
-    draw_rectangle(&buf, -100, 100, 200, 200, 1, 0x00FFFF00);
-    draw_rectangle(&buf, 1850, 1000, 72, 82, 5, 0x0000FFFF);
-    draw_rectangle(&buf, 150, 150, 200, 100, 4000, 0x00FF0000);
+    fill_circ(&buf, 1920, 1080, 300, 0x00FF0000);
     swap_buffers(&buf);
 
     while (!interrupted);

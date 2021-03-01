@@ -28,10 +28,10 @@ void *swap_buffers(Buffer *buf);
 void set_pixel(Buffer *buf, unsigned int x, unsigned int y, uint32_t colour);
 uint32_t get_pixel(Buffer *buf, unsigned int x, unsigned int y);
 
-void fill_rectangle(Buffer *buf, int x0, int y0, unsigned int w, unsigned int h, uint32_t colour);
-void draw_rectangle(Buffer *buf, int x0, int y0, unsigned int w, unsigned int h, unsigned int border, uint32_t colour);
+void fill_rect(Buffer *buf, int x0, int y0, unsigned int w, unsigned int h, uint32_t colour);
+void draw_rect(Buffer *buf, int x0, int y0, unsigned int w, unsigned int h, unsigned int border, uint32_t colour);
 
-void fill_arc(Buffer *buf, int x, int y, unsigned int r, unsigned int angle, uint32_t colour);
-void draw_arc(Buffer *buf, int x, int y, unsigned int r, unsigned int angle, unsigned int border, uint32_t colour);
+void fill_circ(Buffer *buf, int x0, int y0, unsigned int r, uint32_t colour);
+void draw_circ(Buffer *buf, int x0, int y0, unsigned int r, unsigned int border, uint32_t colour);
 
 #endif
