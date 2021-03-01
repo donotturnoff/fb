@@ -75,8 +75,8 @@ void destroy_fb(Buffer *buf) {
     }
 }
 
-void *swap_buffers(Buffer *buf) {
-    return memcpy(buf->fb, buf->bb, buf->size);
+void repaint(Buffer *buf) {
+    memcpy(buf->fb, buf->bb, buf->size);
 }
 
 void clear_buffer(Buffer *buf) {
