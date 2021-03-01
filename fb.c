@@ -24,6 +24,26 @@ void interrupt(int signum) {
     interrupted = 1;
 }
 
+//https://stackoverflow.com/a/1157217
+int msleep(long msec) {
+    struct timespec ts;
+    int res;
+
+    if (msec < 0) {
+        errno = EINVAL;
+        return -1;
+    }
+
+    ts.tv_sec = msec / 1000;
+    ts.tv_nsec = (msec % 1000) * 1000000;
+
+    do {
+        res = nanosleep(&ts, &ts);
+    } while (res && errno == EINTR);
+
+    return res;
+}
+
 int main(void) {
     const char *fb_path = "/dev/fb0";
 
@@ -39,11 +59,16 @@ int main(void) {
         return 2;
     }
 
-    draw_circ(buf, 1920, 1080, 300, 10, 0x00FF0000);
-    fill_circ(buf, 100, 100, 2, 0x00FF0000);
-    swap_buffers(buf);
-
-    while (!interrupted);
+    int dir = 1;
+    int x = 100;
+    while (!interrupted) {
+        fill_circ(buf, x, 500, 100, 0x00FF0000);
+        swap_buffers(buf);
+        clear_buffer(buf);
+        if (x >= 1920 - 100 || x < 100) dir *= -1;
+        x += 5 * dir;
+        msleep(10);
+    }
     destroy_fb(buf);
 
     return 0;
