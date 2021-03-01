@@ -97,7 +97,8 @@ int main(void) {
     }
     buf.bb = bb_buf;
 
-    fill_circ(&buf, 1920, 1080, 300, 0x00FF0000);
+    draw_circ(&buf, 1920, 1080, 300, 10, 0x00FF0000);
+    fill_circ(&buf, 100, 100, 2, 0x00FF0000);
     swap_buffers(&buf);
 
     while (!interrupted);
