@@ -79,6 +79,10 @@ void *swap_buffers(Buffer *buf) {
     return memcpy(buf->fb, buf->bb, buf->size);
 }
 
+void clear_buffer(Buffer *buf) {
+    memset(buf->bb, 0, buf->size);
+}
+
 size_t get_offset(Buffer *buf, unsigned int x, unsigned int y) {
     unsigned int w = buf->w;
     return ((y*w)+x);

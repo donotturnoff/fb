@@ -44,6 +44,7 @@ Buffer *init_fb(const char *fb_path);
 void destroy_fb(Buffer *buf);
 
 void *swap_buffers(Buffer *buf);
+void clear_buffer(Buffer *buf);
 
 void set_pixel(Buffer *buf, unsigned int x, unsigned int y, uint32_t colour);
 uint32_t get_pixel(Buffer *buf, unsigned int x, unsigned int y);
