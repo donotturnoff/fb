@@ -1,0 +1,13 @@
+- Fix screen tearing (better double buffering/move away from /dev/fb0)
+- Remove blinking cursor
+- Lines
+- Triangles
+- Images
+  - PNG
+  - JPEG
+  - GIF
+  - BMP
+- Fonts
+- Anti-aliasing
+- Handle mouse and keyboard input
+

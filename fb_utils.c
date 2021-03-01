@@ -123,22 +123,15 @@ void draw_rect(Buffer *buf, int x0, int y0, unsigned int w, unsigned int h, unsi
     size_t h_ = min(h, border);
     fill_rect(buf, x_, y_, w_, h_, colour);
 
-    x_ = x0;
     y_ = max(y0, y0+h-border);
-    w_ = w;
-    h_ = min(h, border);
     fill_rect(buf, x_, y_, w_, h_, colour);
 
-    x_ = x0;
     y_ = y0+border;
     w_ = border;
     h_ = h-min(h, 2*border);
     fill_rect(buf, x_, y_, w_, h_, colour);
 
     x_ = x0+w-border;
-    y_ = y0+border;
-    w_ = border;
-    h_ = h-min(h, 2*border);
     fill_rect(buf, x_, y_, w_, h_, colour);
 }
 
