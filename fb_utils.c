@@ -149,12 +149,12 @@ void fill_circ(Buffer *buf, int x0, int y0, unsigned int r, uint32_t colour) {
 
     for (int y = max(y0-r, 0); y < min(y0+r, buf_h); y++) {
         int yd2 = (y-y0)*(y-y0);
-        for (int x = max(x0, 0); x < min(x0+r, buf_w); x++) {
+        for (int x = min(buf_w-1, max(x0, 0)); x < min(x0+r, buf_w); x++) {
             int d2 = (x-x0)*(x-x0)+yd2;
             if (d2 > r2) break;
             bb[y*buf_w+x] = colour;
         }
-        for (int x = max(x0-1, 0); x >= max(x0-r, 0); x--) {
+        for (int x = min(buf_w-1, max(x0-1, 0)); x >= max(x0-r, 0); x--) {
             int d2 = (x-x0)*(x-x0)+yd2;
             if (d2 > r2) break;
             bb[y*buf_w+x] = colour;
@@ -173,13 +173,13 @@ void draw_circ(Buffer *buf, int x0, int y0, unsigned int r, unsigned int border,
 
     for (int y = max(y0-r, 0); y < min(y0+r, buf_h); y++) {
         int yd2 = (y-y0)*(y-y0);
-        for (int x = max(x0, 0); x < min(x0+r, buf_w); x++) {
+        for (int x = min(buf_w-1, max(x0, 0)); x < min(x0+r, buf_w); x++) {
             int d2 = (x-x0)*(x-x0)+yd2;
             if (d2 < inner_r2) continue;
             if (d2 > outer_r2) break;
             bb[y*buf_w+x] = colour;
         }
-        for (int x = max(x0-1, 0); x >= max(x0-r, 0); x--) {
+        for (int x = min(buf_w-1, max(x0-1, 0)); x >= max(x0-r, 0); x--) {
             int d2 = (x-x0)*(x-x0)+yd2;
             if (d2 < inner_r2) continue;
             if (d2 > outer_r2) break;

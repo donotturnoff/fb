@@ -60,13 +60,13 @@ int main(void) {
     }
 
     int dir = 1;
-    int x = 100;
+    int x = 0;
     while (!interrupted) {
         fill_circ(buf, x, 500, 100, 0x00FF0000);
         swap_buffers(buf);
         clear_buffer(buf);
         if (x >= 1920 - 100 || x < 100) dir *= -1;
-        x += 5 * dir;
+        x += 5;
         msleep(10);
     }
     destroy_fb(buf);
