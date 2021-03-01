@@ -3,6 +3,78 @@
 extern inline int max(int a, int b);
 extern inline int min(int a, int b);
 
+Buffer *init_fb(const char *fb_path) {
+    int fb_f = open(fb_path, O_RDWR);
+    if (fb_f < 0) {
+        fprintf(stderr, "Failed to open framebuffer %s: %s", fb_path, strerror(errno));
+        return NULL;
+    }
+
+    Buffer *buf = malloc(sizeof(Buffer));
+    if (!buf) {
+        fprintf(stderr, "Failed to allocate memory for buffer: %s", strerror(errno));
+        close(fb_f);
+        return NULL;
+    }
+    buf->f = fb_f;
+
+    struct fb_var_screeninfo vinfo;
+    if (ioctl(fb_f, FBIOGET_VSCREENINFO, &vinfo) < 0) {
+        fprintf(stderr, "Failed to retrieve variable screen info: %s", strerror(errno));
+        destroy_fb(buf);
+        return NULL;
+    }
+
+    size_t fb_w = vinfo.xres;
+    size_t fb_h = vinfo.yres;
+    size_t fb_bpp = vinfo.bits_per_pixel;
+    size_t fb_bytes = fb_bpp / 8;
+    size_t fb_size = fb_w * fb_h * fb_bytes;
+
+    buf->w = fb_w;
+    buf->h = fb_h;
+    buf->bpp = fb_bpp;
+    buf->Bpp = fb_bytes;
+    buf->size = fb_size;
+    buf->fb = NULL;
+    buf->bb = NULL;
+
+    uint32_t *fb_buf = mmap(0, fb_size, PROT_READ | PROT_WRITE, MAP_SHARED, fb_f, (off_t)0);
+    if (fb_buf == MAP_FAILED) {
+        fprintf(stderr, "Failed to mmap framebuffer: %s", strerror(errno));
+        destroy_fb(buf);
+        return NULL;
+    }
+    buf->fb = fb_buf;
+
+    uint32_t *bb_buf = mmap(0, fb_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+    if (bb_buf == MAP_FAILED) {
+        fprintf(stderr, "Failed to mmap backbuffer: %s", strerror(errno));
+        destroy_fb(buf);
+        return NULL;
+    }
+    buf->bb = bb_buf;
+
+    return buf;
+}
+
+void destroy_fb(Buffer *buf) {
+    if (buf) {
+        size_t size = buf->size;
+        if (buf->fb) {
+            memset(buf->fb, 0, size);
+            munmap(buf->fb, size);
+        }
+        if (buf->bb) {
+            munmap(buf->bb, size);
+        }
+        if (buf->f > 0) {
+            close(buf->f);
+        }
+        free(buf);
+    }
+}
+
 void *swap_buffers(Buffer *buf) {
     return memcpy(buf->fb, buf->bb, buf->size);
 }

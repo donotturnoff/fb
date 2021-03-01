@@ -1,10 +1,27 @@
 #ifndef FB_UTILS_H
 #define FB_UTILS_H
 
+#include <linux/fb.h>
+#include <linux/string.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/fcntl.h>
+#include <sys/stat.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/mman.h>
+#include <time.h>
+#include <math.h>
+#include <signal.h>
+#include <errno.h>
 #include <stdint.h>
 
 struct buffer_t {
+    int f;
     uint32_t *fb;
     uint32_t *bb;
     size_t w;
@@ -22,6 +39,9 @@ inline int max(int a, int b) {
 inline int min(int a, int b) {
     return a < b ? a : b;
 }
+
+Buffer *init_fb(const char *fb_path);
+void destroy_fb(Buffer *buf);
 
 void *swap_buffers(Buffer *buf);
 
