@@ -3,6 +3,7 @@
 
 #include <linux/fb.h>
 #include <linux/string.h>
+#include <linux/kd.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -22,6 +23,7 @@
 
 struct buffer_t {
     int f;
+    int tty;
     uint32_t *fb;
     uint32_t *bb;
     size_t w;
@@ -40,7 +42,7 @@ inline int min(int a, int b) {
     return a < b ? a : b;
 }
 
-Buffer *init_fb(const char *fb_path);
+Buffer *init_fb(const char *fb_path, const char *tty_path);
 void destroy_fb(Buffer *buf);
 
 void repaint(Buffer *buf);

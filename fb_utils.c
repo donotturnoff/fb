@@ -3,7 +3,7 @@
 extern inline int max(int a, int b);
 extern inline int min(int a, int b);
 
-Buffer *init_fb(const char *fb_path) {
+Buffer *init_fb(const char *fb_path, const char *tty_path) {
     int fb_f = open(fb_path, O_RDWR);
     if (fb_f < 0) {
         fprintf(stderr, "Failed to open framebuffer %s: %s", fb_path, strerror(errno));
@@ -36,8 +36,17 @@ Buffer *init_fb(const char *fb_path) {
     buf->bpp = fb_bpp;
     buf->Bpp = fb_bytes;
     buf->size = fb_size;
+    buf->tty = -1;
     buf->fb = NULL;
     buf->bb = NULL;
+
+    int tty_f = open(tty_path, O_RDWR);
+    if (ioctl(tty_f, KDSETMODE, KD_GRAPHICS) < 0) {
+        fprintf(stderr, "Failed to set tty graphics mode: %s", strerror(errno));
+        destroy_fb(buf);
+        return NULL;
+    }
+    buf->tty = tty_f;
 
     uint32_t *fb_buf = mmap(0, fb_size, PROT_READ | PROT_WRITE, MAP_SHARED, fb_f, (off_t)0);
     if (fb_buf == MAP_FAILED) {
@@ -61,15 +70,18 @@ Buffer *init_fb(const char *fb_path) {
 void destroy_fb(Buffer *buf) {
     if (buf) {
         size_t size = buf->size;
-        if (buf->fb) {
+        if (buf->fb && buf->fb != MAP_FAILED) {
             memset(buf->fb, 0, size);
             munmap(buf->fb, size);
         }
-        if (buf->bb) {
+        if (buf->bb && buf->bb != MAP_FAILED) {
             munmap(buf->bb, size);
         }
-        if (buf->f > 0) {
+        if (buf->f >= 0) {
             close(buf->f);
+        }
+        if (buf->tty >= 0 && ioctl(buf->tty, KDSETMODE, KD_TEXT) < 0) {
+            fprintf(stderr, "Failed to restore tty text mode: %s", strerror(errno));
         }
         free(buf);
     }

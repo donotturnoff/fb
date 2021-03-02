@@ -46,8 +46,9 @@ int msleep(long msec) {
 
 int main(void) {
     const char *fb_path = "/dev/fb0";
+    const char *tty_path = "/dev/tty2";
 
-    Buffer *buf = init_fb(fb_path);
+    Buffer *buf = init_fb(fb_path, tty_path);
 
     if (!buf) return 1;
 
