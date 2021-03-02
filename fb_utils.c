@@ -9,7 +9,6 @@ Buffer *init_fb(const char *fb_path, const char *tty_path) {
         fprintf(stderr, "Failed to open framebuffer %s: %s\n", fb_path, strerror(errno));
         return NULL;
     }
-    buf->f = fb_f;
 
     Buffer *buf = malloc(sizeof(Buffer));
     if (!buf) {
@@ -17,6 +16,7 @@ Buffer *init_fb(const char *fb_path, const char *tty_path) {
         close(fb_f);
         return NULL;
     }
+    buf->f = fb_f;
 
     struct fb_var_screeninfo vinfo;
     if (ioctl(fb_f, FBIOGET_VSCREENINFO, &vinfo) < 0) {

@@ -56,5 +56,4 @@ void draw_rect(Buffer *buf, int x0, int y0, unsigned int w, unsigned int h, unsi
 
 void fill_circ(Buffer *buf, int x0, int y0, unsigned int r, uint32_t colour);
 void draw_circ(Buffer *buf, int x0, int y0, unsigned int r, unsigned int border, uint32_t colour);
-
 #endif
