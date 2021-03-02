@@ -6,21 +6,21 @@ extern inline int min(int a, int b);
 Buffer *init_fb(const char *fb_path, const char *tty_path) {
     int fb_f = open(fb_path, O_RDWR);
     if (fb_f < 0) {
-        fprintf(stderr, "Failed to open framebuffer %s: %s", fb_path, strerror(errno));
-        return NULL;
-    }
-
-    Buffer *buf = malloc(sizeof(Buffer));
-    if (!buf) {
-        fprintf(stderr, "Failed to allocate memory for buffer: %s", strerror(errno));
-        close(fb_f);
+        fprintf(stderr, "Failed to open framebuffer %s: %s\n", fb_path, strerror(errno));
         return NULL;
     }
     buf->f = fb_f;
 
+    Buffer *buf = malloc(sizeof(Buffer));
+    if (!buf) {
+        fprintf(stderr, "Failed to allocate memory for buffer: %s\n", strerror(errno));
+        close(fb_f);
+        return NULL;
+    }
+
     struct fb_var_screeninfo vinfo;
     if (ioctl(fb_f, FBIOGET_VSCREENINFO, &vinfo) < 0) {
-        fprintf(stderr, "Failed to retrieve variable screen info: %s", strerror(errno));
+        fprintf(stderr, "Failed to retrieve variable screen info: %s\n", strerror(errno));
         destroy_fb(buf);
         return NULL;
     }
@@ -40,17 +40,9 @@ Buffer *init_fb(const char *fb_path, const char *tty_path) {
     buf->fb = NULL;
     buf->bb = NULL;
 
-    int tty_f = open(tty_path, O_RDWR);
-    if (ioctl(tty_f, KDSETMODE, KD_GRAPHICS) < 0) {
-        fprintf(stderr, "Failed to set tty graphics mode: %s", strerror(errno));
-        destroy_fb(buf);
-        return NULL;
-    }
-    buf->tty = tty_f;
-
     uint32_t *fb_buf = mmap(0, fb_size, PROT_READ | PROT_WRITE, MAP_SHARED, fb_f, (off_t)0);
     if (fb_buf == MAP_FAILED) {
-        fprintf(stderr, "Failed to mmap framebuffer: %s", strerror(errno));
+        fprintf(stderr, "Failed to mmap framebuffer: %s\n", strerror(errno));
         destroy_fb(buf);
         return NULL;
     }
@@ -58,11 +50,19 @@ Buffer *init_fb(const char *fb_path, const char *tty_path) {
 
     uint32_t *bb_buf = mmap(0, fb_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
     if (bb_buf == MAP_FAILED) {
-        fprintf(stderr, "Failed to mmap backbuffer: %s", strerror(errno));
+        fprintf(stderr, "Failed to mmap backbuffer: %s\n", strerror(errno));
         destroy_fb(buf);
         return NULL;
     }
     buf->bb = bb_buf;
+
+    int tty_f = open(tty_path, O_RDWR);
+    if (ioctl(tty_f, KDSETMODE, KD_GRAPHICS) < 0) {
+        fprintf(stderr, "Failed to set tty graphics mode: %s\n", strerror(errno));
+        destroy_fb(buf);
+        return NULL;
+    }
+    buf->tty = tty_f;
 
     return buf;
 }
@@ -81,7 +81,7 @@ void destroy_fb(Buffer *buf) {
             close(buf->f);
         }
         if (buf->tty >= 0 && ioctl(buf->tty, KDSETMODE, KD_TEXT) < 0) {
-            fprintf(stderr, "Failed to restore tty text mode: %s", strerror(errno));
+            fprintf(stderr, "Failed to restore tty text mode: %s\n", strerror(errno));
         }
         free(buf);
     }
